@@ -14,6 +14,7 @@ def prepare():
 
 	data = []
 	labels = []
+	unclassed = []
 
 	for dataset in root.iter('{http://www.w3.org/ns/dcat#}Dataset'):
 		about = dataset.attrib['{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about']
@@ -37,8 +38,10 @@ def prepare():
 		if cat == True:
 			data.append(text)
 			labels.append(cats)
+		else:
+			unclassed.append(text)
 
-	return data, labels
+	return data, labels, unclassed
 
 
 # train and test the data
@@ -57,13 +60,15 @@ def train_test(data, labels):
 	text_clf = text_clf.fit(train, train_target)
 
 	# flatten list and get unique labels
-	target_names = list(set(x for l in labels for x in l))
+	target_names = sorted(list(set(x for l in labels for x in l)))
 	predicted = text_clf.predict(test)
 
 	# evaluation metrics	
 	print(M.classification_report(test_target, predicted, target_names=target_names))
+	return text_clf
 
 
-data, labels = prepare()
-train_test(data, labels)
+data, labels, unclassed = prepare()
+model = train_test(data, labels)
+print(model.predict(unclassed))
 
