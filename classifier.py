@@ -29,6 +29,7 @@ def prepare():
 		cats = []
 		for themes in dataset.iter('{http://www.w3.org/ns/dcat#}theme'):
 			theme = themes.attrib['{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource'].split("/")[-1]
+			# ignore INSPIRE themes, we only use EU portal categories
 			if len(theme) == 4:
 				cats.append(theme)
 				cat = True
