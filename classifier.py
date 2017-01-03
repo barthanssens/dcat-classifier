@@ -59,16 +59,20 @@ def train_test(data, labels):
 	])
 	text_clf = text_clf.fit(train, train_target)
 
-	# flatten list and get unique labels
-	target_names = sorted(list(set(x for l in labels for x in l)))
 	predicted = text_clf.predict(test)
 
 	# evaluation metrics	
-	print(M.classification_report(test_target, predicted, target_names=target_names))
-	return text_clf
+	print(M.classification_report(test_target, predicted, target_names=lb.classes_))
+	return text_clf, lb
 
 
 data, labels, unclassed = prepare()
-model = train_test(data, labels)
-print(model.predict(unclassed))
+model, lb = train_test(data, labels)
+
+# suggest labels
+pred = lb.inverse_transform(model.predict(unclassed))
+for label, dataset in zip(pred, unclassed):
+	print dataset
+	print label
+	print "\n\n"	
 
